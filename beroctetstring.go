@@ -1,7 +1,7 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
+	
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -13,13 +13,13 @@ type BerOctetString struct {
 	value []byte
 }
 
-var octetStringTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.OCTET_STRING_TAG)
+var octetStringTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, OCTET_STRING_TAG)
 
 func NewBerOctetString(v []byte) *BerOctetString {
 	return &BerOctetString{value: v}
 }
 
-func (b *BerOctetString) EncodeUsingTag(tag *asn1.BerTag, reversedWriter io.Writer, withTagList ...bool) (int, error) {
+func (b *BerOctetString) EncodeUsingTag(tag *BerTag, reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {
 		withTag = withTagList[0]
@@ -33,7 +33,7 @@ func (b *BerOctetString) EncodeUsingTag(tag *asn1.BerTag, reversedWriter io.Writ
 	if err != nil {
 		return codeLength, err
 	}
-	n, err := asn1.EncodeLength(codeLength, reversedWriter)
+	n, err := EncodeLength(codeLength, reversedWriter)
 	if err != nil {
 		return codeLength, err
 	}
@@ -48,7 +48,7 @@ func (b *BerOctetString) Encode(reversedWriter io.Writer, withTagList ...bool) (
 	return b.EncodeUsingTag(octetStringTag, reversedWriter, withTagList...)
 }
 
-func (b *BerOctetString) DecodeUsingTag(tag *asn1.BerTag, input io.Reader, withTagList ...bool) (int, error) {
+func (b *BerOctetString) DecodeUsingTag(tag *BerTag, input io.Reader, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {
 		withTag = withTagList[0]
@@ -79,7 +79,7 @@ func (b *BerOctetString) Decode(input io.Reader, withTagList ...bool) (int, erro
 	}
 	codeLength := 0
 	if withTag {
-		nextByte, err := asn1.ReadByte(input)
+		nextByte, err := ReadByte(input)
 		if err != nil {
 			return codeLength, err
 		}
@@ -88,10 +88,10 @@ func (b *BerOctetString) Decode(input io.Reader, withTagList ...bool) (int, erro
 		switch nextByte {
 		case -1:
 			return codeLength, errors.New("unexpected end of input")
-		case asn1.OCTET_STRING_TAG:
+		case OCTET_STRING_TAG:
 			n, err = b.decodePrimitiveOctetString(input)
 			return 1 + n, err
-		case asn1.CONSTRUCTED | asn1.OCTET_STRING_TAG: // 0x24:
+		case CONSTRUCTED | OCTET_STRING_TAG: // 0x24:
 			n, err = b.decodeConstructedOctetString(input)
 			return 1 + n, err
 		default:
@@ -104,7 +104,7 @@ func (b *BerOctetString) Decode(input io.Reader, withTagList ...bool) (int, erro
 
 func (b *BerOctetString) decodePrimitiveOctetString(input io.Reader) (int, error) {
 	codeLength := 0
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {
@@ -123,7 +123,7 @@ func (b *BerOctetString) decodePrimitiveOctetString(input io.Reader) (int, error
 
 func (b *BerOctetString) decodeConstructedOctetString(input io.Reader) (int, error) {
 	codeLength := 0
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	if err != nil {
 		return codeLength, err
@@ -132,7 +132,7 @@ func (b *BerOctetString) decodeConstructedOctetString(input io.Reader) (int, err
 	vLength := 0
 
 	if berLength.Length < 0 {
-		berTag := new(asn1.BerTag)
+		berTag := new(BerTag)
 		n, err := berTag.Decode(input)
 		vLength += n
 		for !berTag.Equals(0, 0, 0) {
@@ -149,7 +149,7 @@ func (b *BerOctetString) decodeConstructedOctetString(input io.Reader) (int, err
 				return 0, err
 			}
 		}
-		_ = asn1.ReadEocByte(input)
+		_ = ReadEocByte(input)
 		vLength += 1
 	} else {
 		for vLength < berLength.Length {

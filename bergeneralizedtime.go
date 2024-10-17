@@ -1,7 +1,7 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
+	
 	"io"
 )
 
@@ -9,7 +9,7 @@ type BerGeneralizedTime struct {
 	BerTime
 }
 
-var generalizedTimeTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.GENERALIZED_TIME_TAG)
+var generalizedTimeTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, GENERALIZED_TIME_TAG)
 
 func NewBerGeneralizedTime(value string) *BerGeneralizedTime {
 	return &BerGeneralizedTime{BerTime: *NewBerTime(value)}

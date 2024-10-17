@@ -1,7 +1,7 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
+	
 	"errors"
 	"fmt"
 	"io"
@@ -16,7 +16,7 @@ type BerReal struct {
 	value float64
 }
 
-var realTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.REAL_TAG)
+var realTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, REAL_TAG)
 
 func NewBerReal(v float64) *BerReal {
 	return &BerReal{value: v}
@@ -32,7 +32,7 @@ func (b *BerReal) Encode(reversedWriter io.Writer, withTagList ...bool) (int, er
 
 	n, err := b.encodeValue(reversedWriter)
 	codeLength := n
-	n, err = asn1.EncodeLength(codeLength, reversedWriter)
+	n, err = EncodeLength(codeLength, reversedWriter)
 	codeLength += n
 	if err != nil {
 		return 0, err
@@ -60,7 +60,7 @@ func (b *BerReal) Decode(input io.Reader, withTagList ...bool) (int, error) {
 			return codeLength, err
 		}
 	}
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {
@@ -72,7 +72,7 @@ func (b *BerReal) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		return codeLength, nil
 	}
 	if berLength.Length == 1 {
-		nextByte, err := asn1.ReadByte(input)
+		nextByte, err := ReadByte(input)
 		if err != nil {
 			return 0, err
 		} else if nextByte == 0x40 {
@@ -146,10 +146,10 @@ func (b *BerReal) encodeValue(writer io.Writer) (int, error) {
 		if mantissa == 0x0010000000000000 {
 			if isNegative {
 				// - infinity
-				_, _ = asn1.WriteByte(writer, 0x41)
+				_, _ = WriteByte(writer, 0x41)
 			} else {
 				// + infinity
-				_, _ = asn1.WriteByte(writer, 0x40)
+				_, _ = WriteByte(writer, 0x40)
 			}
 			return 1, nil
 		} else {
@@ -183,7 +183,7 @@ func (b *BerReal) encodeValue(writer io.Writer) (int, error) {
 	mantissaLength := (8 - bits.LeadingZeros64(mantissa) + 7) / 8
 
 	for i := 0; i < mantissaLength; i++ {
-		_, _ = asn1.WriteByte(writer, mantissa>>(8*i))
+		_, _ = WriteByte(writer, mantissa>>(8*i))
 	}
 	codeLength := mantissaLength
 
@@ -195,15 +195,15 @@ func (b *BerReal) encodeValue(writer io.Writer) (int, error) {
 	if len(exponentBytes) < 4 {
 		exponentFormat = len(exponentBytes) - 1
 	} else {
-		_, _ = asn1.WriteByte(writer, len(exponentBytes))
+		_, _ = WriteByte(writer, len(exponentBytes))
 		codeLength++
 		exponentFormat = 0x03
 	}
 
 	if isNegative {
-		_, _ = asn1.WriteByte(writer, 0x80|0x40|exponentFormat)
+		_, _ = WriteByte(writer, 0x80|0x40|exponentFormat)
 	} else {
-		_, _ = asn1.WriteByte(writer, 0x80|exponentFormat)
+		_, _ = WriteByte(writer, 0x80|exponentFormat)
 	}
 
 	codeLength++

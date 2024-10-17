@@ -1,7 +1,6 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
 	"errors"
 	"io"
 	"strconv"
@@ -11,7 +10,7 @@ type BerBoolean struct {
 	value bool
 }
 
-var boolTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.BOOLEAN_TAG)
+var boolTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, BOOLEAN_TAG)
 
 func NewBerBoolean(v bool) *BerBoolean {
 	return &BerBoolean{value: v}
@@ -36,7 +35,7 @@ func (b *BerBoolean) Encode(reversedWriter io.Writer, withTagList ...bool) (int,
 	if err != nil {
 		return codeLength, err
 	}
-	n, err := asn1.EncodeLength(codeLength, reversedWriter)
+	n, err := EncodeLength(codeLength, reversedWriter)
 	codeLength += n
 	if err != nil {
 		return codeLength, err
@@ -65,7 +64,7 @@ func (b *BerBoolean) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		}
 	}
 
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {
@@ -74,7 +73,7 @@ func (b *BerBoolean) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		return codeLength, errors.New("Invalid length for boolean type")
 	}
 
-	nextByte, err := asn1.ReadByte(input)
+	nextByte, err := ReadByte(input)
 	if err != nil {
 		return codeLength, err
 	}

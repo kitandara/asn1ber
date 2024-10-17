@@ -1,18 +1,16 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
-	"dsmagic.com/asn1/types/strings"
 	"errors"
 	"fmt"
 	"io"
 )
 
-var dvTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.CONSTRUCTED, asn1.CONSTRUCTED_TAG)
+var dvTag = NewBerTag(UNIVERSAL_CLASS, CONSTRUCTED, CONSTRUCTED_TAG)
 
 type BerEmbeddedPdv struct {
 	identification      *Identification
-	dataValueDescriptor *strings.BerObjectDescriptor
+	dataValueDescriptor *BerObjectDescriptor
 	dataValue           *BerOctetString
 }
 
@@ -32,7 +30,7 @@ func (b *BerEmbeddedPdv) Encode(reversedWriter io.Writer, withTagList ...bool) (
 		return 0, err
 	}
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 2
-	n, err = asn1.WriteByte(reversedWriter, 0x82)
+	n, err = WriteByte(reversedWriter, 0x82)
 	codeLength += 1
 	if err != nil {
 		return 0, err
@@ -43,7 +41,7 @@ func (b *BerEmbeddedPdv) Encode(reversedWriter io.Writer, withTagList ...bool) (
 			return 0, err
 		}
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 1
-		n, err = asn1.WriteByte(reversedWriter, 0x81)
+		n, err = WriteByte(reversedWriter, 0x81)
 		codeLength += 1
 	}
 	subLength, err = b.identification.encode(reversedWriter)
@@ -51,15 +49,15 @@ func (b *BerEmbeddedPdv) Encode(reversedWriter io.Writer, withTagList ...bool) (
 		return 0, err
 	}
 	codeLength += subLength
-	n, err = asn1.EncodeLength(subLength, reversedWriter)
+	n, err = EncodeLength(subLength, reversedWriter)
 	codeLength += n
 	// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
-	n, err = asn1.WriteByte(reversedWriter, 0xA0)
+	n, err = WriteByte(reversedWriter, 0xA0)
 	codeLength += 1
 	if err != nil {
 		return 0, err
 	}
-	n, err = asn1.EncodeLength(codeLength, reversedWriter)
+	n, err = EncodeLength(codeLength, reversedWriter)
 	if err != nil {
 		return 0, err
 	}
@@ -79,7 +77,7 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 	}
 	tlByteCount := 0
 	vByteCount := 0
-	berTag := new(asn1.BerTag)
+	berTag := new(BerTag)
 
 	codeLength := 0
 	if withTag {
@@ -90,7 +88,7 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 		tlByteCount += n
 	}
 
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	lengthVal := n
 	if err != nil {
@@ -103,7 +101,7 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 		return 0, err
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.CONSTRUCTED, 0) {
+	if berTag.Equals(CONTEXT_CLASS, CONSTRUCTED, 0) {
 		n, err = berLength.Decode(input)
 		vByteCount += n
 		b.identification = new(Identification)
@@ -125,8 +123,8 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 	} else {
 		return 0, errors.New("tag does not match mandatory sequence component.")
 	}
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 1) {
-		b.dataValueDescriptor = new(strings.BerObjectDescriptor)
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 1) {
+		b.dataValueDescriptor = new(BerObjectDescriptor)
 		n, err = b.dataValueDescriptor.Decode(input, false)
 		if err != nil {
 			return codeLength, err
@@ -139,7 +137,7 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 		vByteCount += n
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 2) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 2) {
 		b.dataValue = new(BerOctetString)
 		n, err = b.dataValue.Decode(input, false)
 		vByteCount += n
@@ -162,7 +160,7 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 		if !berTag.Equals(0, 0, 0) {
 			return 0, errors.New("decoded sequence has wrong end of contents octets")
 		}
-		err = asn1.ReadEocByte(input)
+		err = ReadEocByte(input)
 		vByteCount += 1
 		return tlByteCount + vByteCount, nil
 	}
@@ -183,12 +181,12 @@ type Identification struct {
 	fixed                 *BerNull
 }
 
-func (b *Identification) decode(input io.Reader, berTag *asn1.BerTag) (int, error) {
+func (b *Identification) decode(input io.Reader, berTag *BerTag) (int, error) {
 	tlvByteCount := 0
 	tagWasPassed := (berTag != nil)
 
 	if berTag == nil {
-		berTag = new(asn1.BerTag)
+		berTag = new(BerTag)
 		n, err := berTag.Decode(input)
 		tlvByteCount += n
 		if err != nil {
@@ -196,38 +194,38 @@ func (b *Identification) decode(input io.Reader, berTag *asn1.BerTag) (int, erro
 		}
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.CONSTRUCTED, 0) {
+	if berTag.Equals(CONTEXT_CLASS, CONSTRUCTED, 0) {
 		b.syntaxes = new(Syntaxes)
 		n, err := b.syntaxes.Decode(input, false)
 		tlvByteCount += n
 		return tlvByteCount, err
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 1) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 1) {
 		b.syntax = new(BerObjectIdentifier)
 		n, err := b.syntax.Decode(input, false)
 		tlvByteCount += n
 		return tlvByteCount, err
 	}
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 2) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 2) {
 		b.presentationContextId = new(BerInteger)
 		n, err := b.presentationContextId.Decode(input, false)
 		tlvByteCount += n
 		return tlvByteCount, err
 	}
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.CONSTRUCTED, 3) {
+	if berTag.Equals(CONTEXT_CLASS, CONSTRUCTED, 3) {
 		b.contextNegotiation = new(contextNegotiation)
 		n, err := b.contextNegotiation.Decode(input, false)
 		tlvByteCount += n
 		return tlvByteCount, err
 	}
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 4) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 4) {
 		b.transferSyntax = new(BerObjectIdentifier)
 		n, err := b.transferSyntax.Decode(input, false)
 		tlvByteCount += n
 		return tlvByteCount, err
 	}
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 5) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 5) {
 		b.fixed = new(BerNull)
 		n, err := b.fixed.Decode(input, false)
 		tlvByteCount += n
@@ -248,7 +246,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.fixed.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 5
 		codeLength += n
-		_, err := asn1.WriteByte(reversedWriter, 0x85)
+		_, err := WriteByte(reversedWriter, 0x85)
 		if err != nil {
 			return codeLength, err
 		}
@@ -260,7 +258,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.transferSyntax.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 4
 		codeLength += n
-		_, err := asn1.WriteByte(reversedWriter, 0x84)
+		_, err := WriteByte(reversedWriter, 0x84)
 		if err != nil {
 			return codeLength, err
 		}
@@ -273,7 +271,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.contextNegotiation.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 3
 		codeLength += n
-		_, err := asn1.WriteByte(reversedWriter, 0xA3)
+		_, err := WriteByte(reversedWriter, 0xA3)
 		if err != nil {
 			return codeLength, err
 		}
@@ -286,7 +284,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.presentationContextId.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 2
 		codeLength += n
-		_, err := asn1.WriteByte(reversedWriter, 0x82)
+		_, err := WriteByte(reversedWriter, 0x82)
 		if err != nil {
 			return codeLength, err
 		}
@@ -299,7 +297,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.syntax.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 1
 		codeLength += n
-		_, err := asn1.WriteByte(reversedWriter, 0x81)
+		_, err := WriteByte(reversedWriter, 0x81)
 		if err != nil {
 			return codeLength, err
 		}
@@ -312,7 +310,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.syntaxes.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 0
 		codeLength += n
-		_, err := asn1.WriteByte(reversedWriter, 0xA0)
+		_, err := WriteByte(reversedWriter, 0xA0)
 		if err != nil {
 			return codeLength, err
 		}
@@ -323,7 +321,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 	return codeLength, errors.New("error encoding CHOICE: No element of CHOICE was selected")
 }
 
-var syntaxesTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.CONSTRUCTED, 16)
+var syntaxesTag = NewBerTag(UNIVERSAL_CLASS, CONSTRUCTED, 16)
 
 type Syntaxes struct {
 	abstract_ BerObjectIdentifier
@@ -341,7 +339,7 @@ func (b *Syntaxes) Encode(reversedWriter io.Writer, withTagList ...bool) (int, e
 	n, _ := b.transfer.Encode(reversedWriter, false)
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 1
 	codeLength := n
-	_, err := asn1.WriteByte(reversedWriter, 0x81)
+	_, err := WriteByte(reversedWriter, 0x81)
 	if err != nil {
 		return codeLength, err
 	}
@@ -352,13 +350,13 @@ func (b *Syntaxes) Encode(reversedWriter io.Writer, withTagList ...bool) (int, e
 	}
 	codeLength += n
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 0
-	_, err = asn1.WriteByte(reversedWriter, 0x80)
+	_, err = WriteByte(reversedWriter, 0x80)
 	if err != nil {
 		return codeLength, err
 	}
 	codeLength += 1
 
-	n, err = asn1.EncodeLength(codeLength, reversedWriter)
+	n, err = EncodeLength(codeLength, reversedWriter)
 	if err != nil {
 		return codeLength, err
 	}
@@ -383,7 +381,7 @@ func (b *Syntaxes) Decode(input io.Reader, withTagList ...bool) (int, error) {
 
 	tlByteCount := 0
 	vByteCount := 0
-	berTag := new(asn1.BerTag)
+	berTag := new(BerTag)
 
 	if withTag {
 		n, err := syntaxesTag.DecodeAndCheck(input)
@@ -392,7 +390,7 @@ func (b *Syntaxes) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		}
 		tlByteCount += n
 	}
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	if err != nil {
 		return 0, err
@@ -405,7 +403,7 @@ func (b *Syntaxes) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		return 0, err
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 0) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 0) {
 		b.abstract_ = BerObjectIdentifier{}
 		n, err = b.abstract_.Decode(input, false)
 		vByteCount += n
@@ -415,7 +413,7 @@ func (b *Syntaxes) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		return 0, errors.New("tag does not match mandatory sequence component.")
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 1) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 1) {
 		b.transfer = BerObjectIdentifier{}
 		n, _ = b.transfer.Decode(input, false)
 		vByteCount += n
@@ -432,14 +430,14 @@ func (b *Syntaxes) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		if !berTag.Equals(0, 0, 0) {
 			return 0, errors.New("decoded sequence has wrong end of contents octets")
 		}
-		_ = asn1.ReadEocByte(input)
+		_ = ReadEocByte(input)
 		vByteCount += 1
 		return tlByteCount + vByteCount, nil
 	}
 	return 0, errors.New(fmt.Sprintf("unexpected end of sequence, length tag: %d, bytes decoded: %d", lengthVal, vByteCount))
 }
 
-var contextNegotiationTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.CONSTRUCTED, 16)
+var contextNegotiationTag = NewBerTag(UNIVERSAL_CLASS, CONSTRUCTED, 16)
 
 type contextNegotiation struct {
 	presentationContextId BerInteger
@@ -461,7 +459,7 @@ func (b *contextNegotiation) Encode(reversedWriter io.Writer, withTagList ...boo
 		return codeLength, err
 	}
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 1
-	_, err = asn1.WriteByte(reversedWriter, 0x81)
+	_, err = WriteByte(reversedWriter, 0x81)
 	if err != nil {
 		return codeLength, err
 	}
@@ -473,13 +471,13 @@ func (b *contextNegotiation) Encode(reversedWriter io.Writer, withTagList ...boo
 	}
 
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 0
-	_, err = asn1.WriteByte(reversedWriter, 0x80)
+	_, err = WriteByte(reversedWriter, 0x80)
 	if err != nil {
 		return codeLength, err
 	}
 	codeLength += 1
 
-	n, err = asn1.EncodeLength(codeLength, reversedWriter)
+	n, err = EncodeLength(codeLength, reversedWriter)
 	if err != nil {
 		return codeLength, err
 	}
@@ -504,7 +502,7 @@ func (b *contextNegotiation) Decode(input io.Reader, withTagList ...bool) (int, 
 
 	tlByteCount := 0
 	vByteCount := 0
-	berTag := new(asn1.BerTag)
+	berTag := new(BerTag)
 
 	if withTag {
 		n, err := contextNegotiationTag.DecodeAndCheck(input)
@@ -513,7 +511,7 @@ func (b *contextNegotiation) Decode(input io.Reader, withTagList ...bool) (int, 
 		}
 		tlByteCount += n
 	}
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	if err != nil {
 		return 0, err
@@ -526,7 +524,7 @@ func (b *contextNegotiation) Decode(input io.Reader, withTagList ...bool) (int, 
 		return 0, err
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 0) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 0) {
 		b.presentationContextId = BerInteger{}
 		n, err = b.presentationContextId.Decode(input, false)
 		vByteCount += n
@@ -536,7 +534,7 @@ func (b *contextNegotiation) Decode(input io.Reader, withTagList ...bool) (int, 
 		return 0, errors.New("tag does not match mandatory sequence component.")
 	}
 
-	if berTag.Equals(asn1.CONTEXT_CLASS, asn1.PRIMITIVE, 1) {
+	if berTag.Equals(CONTEXT_CLASS, PRIMITIVE, 1) {
 		b.transferSyntax = BerObjectIdentifier{}
 		n, _ = b.transferSyntax.Decode(input, false)
 		vByteCount += n
@@ -553,7 +551,7 @@ func (b *contextNegotiation) Decode(input io.Reader, withTagList ...bool) (int, 
 		if !berTag.Equals(0, 0, 0) {
 			return 0, errors.New("decoded sequence has wrong end of contents octets")
 		}
-		_ = asn1.ReadEocByte(input)
+		_ = ReadEocByte(input)
 		vByteCount += 1
 		return tlByteCount + vByteCount, nil
 	}

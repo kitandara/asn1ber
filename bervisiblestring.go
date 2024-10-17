@@ -1,7 +1,6 @@
-package strings
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
 	"io"
 )
 
@@ -9,7 +8,7 @@ type BerVisibleString struct {
 	value []byte
 }
 
-var berVisibleStringTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.VISIBLE_STRING_TAG)
+var berVisibleStringTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, VISIBLE_STRING_TAG)
 
 func NewBerVisibleString(value string) *BerVisibleString {
 	return &BerVisibleString{value: []byte(value)}
@@ -23,7 +22,7 @@ func (b *BerVisibleString) Decode(input io.Reader, withTagList ...bool) (int, er
 	return b.DecodeUsingTag(berVisibleStringTag, input, withTagList...)
 }
 
-func (b *BerVisibleString) EncodeUsingTag(tag *asn1.BerTag, reversedWriter io.Writer, withTagList ...bool) (int, error) {
+func (b *BerVisibleString) EncodeUsingTag(tag *BerTag, reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {
 		withTag = withTagList[0]
@@ -46,7 +45,7 @@ func (b *BerVisibleString) EncodeUsingTag(tag *asn1.BerTag, reversedWriter io.Wr
 	return codeLength, nil
 }
 
-func (b *BerVisibleString) DecodeUsingTag(tag *asn1.BerTag, input io.Reader, withTagList ...bool) (int, error) {
+func (b *BerVisibleString) DecodeUsingTag(tag *BerTag, input io.Reader, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {
 		withTag = withTagList[0]
@@ -61,7 +60,7 @@ func (b *BerVisibleString) DecodeUsingTag(tag *asn1.BerTag, input io.Reader, wit
 			return codeLength, err
 		}
 	}
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {

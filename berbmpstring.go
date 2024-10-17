@@ -1,19 +1,17 @@
-package strings
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
-	asn12 "dsmagic.com/asn1/types"
 	"io"
 )
 
 type BerBmpString struct {
-	asn12.BerOctetString
+	BerOctetString
 }
 
-var bmpstringTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.BMP_STRING_TAG)
+var bmpstringTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, BMP_STRING_TAG)
 
 func NewBerBmpString(value []byte) *BerBmpString {
-	return &BerBmpString{BerOctetString: *asn12.NewBerOctetString(value)}
+	return &BerBmpString{BerOctetString: *NewBerOctetString(value)}
 }
 
 func (b *BerBmpString) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {

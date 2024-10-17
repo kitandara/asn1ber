@@ -1,19 +1,17 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
-	string2 "dsmagic.com/asn1/types/strings"
 	"io"
 )
 
 type BerTime struct {
-	string2.BerVisibleString
+	BerVisibleString
 }
 
-var timeTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.TIME_TAG)
+var timeTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, TIME_TAG)
 
 func NewBerTime(value string) *BerTime {
-	return &BerTime{BerVisibleString: *string2.NewBerVisibleString(value)}
+	return &BerTime{BerVisibleString: *NewBerVisibleString(value)}
 }
 
 func (b *BerTime) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {

@@ -1,4 +1,4 @@
-package asn1
+package asn1ber
 
 // ReversedIoWriter Writer for outputing ber data in reversed order, so we can make it easier to write BER types.
 type ReversedIoWriter struct {

@@ -1,7 +1,6 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
 	"io"
 )
 
@@ -9,7 +8,7 @@ type BerTimeOfDay struct {
 	BerTime
 }
 
-var timeOfDayTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.TIME_OF_DAY_TAG)
+var timeOfDayTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, TIME_OF_DAY_TAG)
 
 func NewBerTimeOfDay(value string) *BerTimeOfDay {
 	return &BerTimeOfDay{BerTime: *NewBerTime(value)}

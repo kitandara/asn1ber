@@ -1,8 +1,8 @@
-package asn1
+package asn1ber
 
 import (
 	"bytes"
-	"dsmagic.com/asn1"
+	
 	"errors"
 	"fmt"
 	"io"
@@ -13,7 +13,7 @@ type BerObjectIdentifier struct {
 	value []int
 }
 
-var objectIdentifierTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.OBJECT_IDENTIFIER_TAG)
+var objectIdentifierTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, OBJECT_IDENTIFIER_TAG)
 
 func NewBerObjectIdentifier(value []int) *BerObjectIdentifier {
 	return &BerObjectIdentifier{value: value} // Do not check for now...
@@ -45,15 +45,15 @@ func (b *BerObjectIdentifier) Encode(reversedWriter io.Writer, withTagList ...bo
 			subIDLength++
 		}
 
-		_, _ = asn1.WriteByte(reversedWriter, subidentifier&0x7f)
+		_, _ = WriteByte(reversedWriter, subidentifier&0x7f)
 
 		for j := 1; j <= (subIDLength - 1); j++ {
-			_, _ = asn1.WriteByte(((subidentifier >> (7 * j)) & 0xff) | 0x80)
+			_, _ = WriteByte(((subidentifier >> (7 * j)) & 0xff) | 0x80)
 		}
 
 		codeLength += subIDLength
 	}
-	n, _ := asn1.EncodeLength(codeLength, reversedWriter)
+	n, _ := EncodeLength(codeLength, reversedWriter)
 	codeLength += n
 	if withTag {
 		n, _ = objectIdentifierTag.Encode(reversedWriter)
@@ -77,7 +77,7 @@ func (b *BerObjectIdentifier) Decode(input io.Reader, withTagList ...bool) (int,
 			return codeLength, err
 		}
 	}
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {

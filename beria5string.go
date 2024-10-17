@@ -1,19 +1,17 @@
-package strings
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
-	asn12 "dsmagic.com/asn1/types"
 	"io"
 )
 
 type BerIA5String struct {
-	asn12.BerOctetString
+	BerOctetString
 }
 
-var ia5stringTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.IA5_STRING_TAG)
+var ia5stringTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, IA5_STRING_TAG)
 
 func NewBerIA5String(value []byte) *BerIA5String {
-	return &BerIA5String{BerOctetString: *asn12.NewBerOctetString(value)}
+	return &BerIA5String{BerOctetString: *NewBerOctetString(value)}
 }
 
 func (b *BerIA5String) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {

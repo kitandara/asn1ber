@@ -1,16 +1,16 @@
 package main
 
 import (
-	asn12 "dsmagic.com/asn1"
-	asn1 "dsmagic.com/asn1/types"
+	 
+	types"
 	"encoding/hex"
 	"fmt"
 )
 
 func main() {
 
-	d := asn1.NewBerEnum(4)
-	w := asn12.NewReversedIOWriter()
+	d := NewBerEnum(4)
+	w := .NewReversedIOWriter()
 
 	d.Encode(w)
 

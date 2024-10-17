@@ -1,8 +1,8 @@
-package asn1
+package asn1ber
 
 import (
 	"bytes"
-	"dsmagic.com/asn1"
+
 	"errors"
 	"fmt"
 	"io"
@@ -13,7 +13,7 @@ type BerBitString struct {
 	numBits int
 }
 
-var bitStringTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.BIT_STRING_TAG)
+var bitStringTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, BIT_STRING_TAG)
 
 func NewBerBitString(value []bool) (*BerBitString, error) {
 	if value == nil {
@@ -59,7 +59,7 @@ func (b *BerBitString) Encode(reversedWriter io.Writer, withTagList ...bool) (in
 		}
 	}
 	codeLength := len(b.value) + 1
-	n, err := asn1.EncodeLength(codeLength, reversedWriter)
+	n, err := EncodeLength(codeLength, reversedWriter)
 	if err != nil {
 		return 0, err
 	}
@@ -87,7 +87,7 @@ func (b *BerBitString) Decode(input io.Reader, withTagList ...bool) (int, error)
 			return codeLength, err
 		}
 	}
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {

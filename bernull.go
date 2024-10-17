@@ -1,7 +1,7 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
+	
 	"errors"
 	"io"
 )
@@ -9,7 +9,7 @@ import (
 type BerNull struct {
 }
 
-var nullTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.NULL_TAG)
+var nullTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, NULL_TAG)
 
 func (b *BerNull) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	var withTag bool
@@ -19,7 +19,7 @@ func (b *BerNull) Encode(reversedWriter io.Writer, withTagList ...bool) (int, er
 		withTag = true
 	}
 
-	codeLength, err := asn1.EncodeLength(0, reversedWriter)
+	codeLength, err := EncodeLength(0, reversedWriter)
 	if err != nil {
 		return 0, err
 	}
@@ -50,7 +50,7 @@ func (b *BerNull) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		}
 	}
 
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {

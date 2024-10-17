@@ -1,19 +1,17 @@
-package strings
+package asn1ber
 
 import (
-	asn1 "dsmagic.com/asn1"
-	asn12 "dsmagic.com/asn1/types"
 	"io"
 )
 
 type BerGraphicString struct {
-	asn12.BerOctetString
+	BerOctetString
 }
 
-var graphicStringTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.GRAPHIC_STRING_TAG)
+var graphicStringTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, GRAPHIC_STRING_TAG)
 
 func NewBerGraphicString(value []byte) *BerGraphicString {
-	return &BerGraphicString{BerOctetString: *asn12.NewBerOctetString(value)}
+	return &BerGraphicString{BerOctetString: *NewBerOctetString(value)}
 }
 
 func (b *BerGraphicString) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {

@@ -1,7 +1,6 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
 	"io"
 )
 
@@ -9,7 +8,7 @@ type BerUtcTime struct {
 	BerTime
 }
 
-var utcTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.UTC_TIME_TAG)
+var utcTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, UTC_TIME_TAG)
 
 func NewBerUtcTime(value string) *BerUtcTime {
 	return &BerUtcTime{BerTime: *NewBerTime(value)}

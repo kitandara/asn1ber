@@ -1,7 +1,7 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
+	
 	"errors"
 	"io"
 	"math/big"
@@ -11,13 +11,13 @@ type BerInteger struct {
 	value *big.Int
 }
 
-var intTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.INTEGER_TAG)
+var intTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, INTEGER_TAG)
 
 func NewBerInteger(v int64) *BerInteger {
 	return &BerInteger{value: new(big.Int).SetInt64(v)}
 }
 
-func (b *BerInteger) encodeUsingTag(tag *asn1.BerTag, reversedWriter io.Writer, withTagList ...bool) (int, error) {
+func (b *BerInteger) encodeUsingTag(tag *BerTag, reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {
 		withTag = withTagList[0]
@@ -32,7 +32,7 @@ func (b *BerInteger) encodeUsingTag(tag *asn1.BerTag, reversedWriter io.Writer, 
 	if err != nil {
 		return codeLength, err
 	}
-	n, err := asn1.EncodeLength(codeLength, reversedWriter)
+	n, err := EncodeLength(codeLength, reversedWriter)
 	if err != nil {
 		return codeLength, err
 	}
@@ -47,7 +47,7 @@ func (b *BerInteger) Encode(reversedWriter io.Writer, withTagList ...bool) (int,
 	return b.encodeUsingTag(intTag, reversedWriter, withTagList...)
 }
 
-func (b *BerInteger) decodeUsingTag(tag *asn1.BerTag, input io.Reader, withTagList ...bool) (int, error) {
+func (b *BerInteger) decodeUsingTag(tag *BerTag, input io.Reader, withTagList ...bool) (int, error) {
 
 	var withTag bool
 	if len(withTagList) > 0 {
@@ -63,7 +63,7 @@ func (b *BerInteger) decodeUsingTag(tag *asn1.BerTag, input io.Reader, withTagLi
 			return codeLength, err
 		}
 	}
-	berLength := &asn1.BerLength{}
+	berLength := &BerLength{}
 	n, err := berLength.Decode(input)
 	codeLength += n
 	if err != nil {

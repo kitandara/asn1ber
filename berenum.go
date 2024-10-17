@@ -1,7 +1,7 @@
-package asn1
+package asn1ber
 
 import (
-	"dsmagic.com/asn1"
+	
 	"io"
 )
 
@@ -11,7 +11,7 @@ type BerEnum struct {
 	BerInteger
 }
 
-var enumTag = asn1.NewBerTag(asn1.UNIVERSAL_CLASS, asn1.PRIMITIVE, asn1.ENUMERATED_TAG)
+var enumTag = NewBerTag(UNIVERSAL_CLASS, PRIMITIVE, ENUMERATED_TAG)
 
 func NewBerEnum(v int64) *BerEnum {
 	return &BerEnum{

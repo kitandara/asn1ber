@@ -1,8 +1,8 @@
-package asn1
+package asn1ber
 
 import (
 	"bytes"
-	"dsmagic.com/asn1"
+
 	"encoding/hex"
 	"io"
 )
@@ -16,12 +16,12 @@ func (b *BerAny) Decode(r io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeWithTag(r, nil)
 }
 
-func (b *BerAny) DecodeWithTag(r io.Reader, tag *asn1.BerTag) (int, error) {
+func (b *BerAny) DecodeWithTag(r io.Reader, tag *BerTag) (int, error) {
 	os := &bytes.Buffer{}
 
 	byteCount := 0
 	if tag == nil {
-		tag = new(asn1.BerTag)
+		tag = new(BerTag)
 		n, err := tag.Decode(r)
 		byteCount += n
 		if err != nil {
@@ -29,7 +29,7 @@ func (b *BerAny) DecodeWithTag(r io.Reader, tag *asn1.BerTag) (int, error) {
 		}
 	}
 	_, _ = tag.Encode(os)
-	n, err := asn1.DecodeUnknownComponent(r, os)
+	n, err := DecodeUnknownComponent(r, os)
 	byteCount += n
 	if err != nil {
 		return byteCount, err
