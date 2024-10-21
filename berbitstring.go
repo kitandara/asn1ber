@@ -130,3 +130,6 @@ func (b *BerBitString) S() string {
 	}
 	return buffer.String()
 }
+func (b *BerBitString) GetTag() *BerTag {
+	return withTag
+}

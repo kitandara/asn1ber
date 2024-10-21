@@ -558,3 +558,6 @@ func (b *contextNegotiation) Decode(input io.Reader, withTagList ...bool) (int, 
 	}
 	return 0, errors.New(fmt.Sprintf("unexpected end of sequence, length tag: %d, bytes decoded: %d", lengthVal, vByteCount))
 }
+func (b *contextNegotiation) GetTag() *BerTag {
+	return withTag
+}

@@ -65,3 +65,6 @@ func (b *BerNull) Decode(input io.Reader, withTagList ...bool) (int, error) {
 func (b *BerNull) S() string {
 	return "ASN1_NULL"
 }
+func (b *BerNull) GetTag() *BerTag {
+	return withTag
+}

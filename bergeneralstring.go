@@ -21,3 +21,6 @@ func (b *BerGeneralString) Encode(reversedWriter io.Writer, withTagList ...bool)
 func (b *BerGeneralString) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(generalstringTag, input, withTagList...)
 }
+func (b *BerGeneralString) GetTag() *BerTag {
+	return generalstringTag
+}

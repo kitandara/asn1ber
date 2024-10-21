@@ -28,3 +28,6 @@ func (b *BerEnum) Decode(input io.Reader, withTagList ...bool) (int, error) {
 func (b *BerEnum) GetTag() *BerTag {
 	return enumTag
 }
+func (b *BerEnum) GetTag() *BerTag {
+	return enumTag
+}

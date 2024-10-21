@@ -168,3 +168,6 @@ func (b *BerOctetString) decodeConstructedOctetString(input io.Reader) (int, err
 func (b *BerOctetString) S() string {
 	return hex.EncodeToString(b.value)
 }
+func (b *BerOctetString) GetTag() *BerTag {
+	return withTag
+}

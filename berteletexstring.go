@@ -21,3 +21,6 @@ func (b *BerTeletexString) Encode(reversedWriter io.Writer, withTagList ...bool)
 func (b *BerTeletexString) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(teletexstringTag, input, withTagList...)
 }
+func (b *BerTeletexString) GetTag() *BerTag {
+	return teletexstringTag
+}

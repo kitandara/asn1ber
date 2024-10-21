@@ -21,3 +21,6 @@ func (b *BerUTF8String) Encode(reversedWriter io.Writer, withTagList ...bool) (i
 func (b *BerUTF8String) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(utf8stringTag, input, withTagList...)
 }
+func (b *BerUTF8String) GetTag() *BerTag {
+	return utf8stringTag
+}

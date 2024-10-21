@@ -21,3 +21,6 @@ func (b *BerVideotexString) Encode(reversedWriter io.Writer, withTagList ...bool
 func (b *BerVideotexString) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(videotexstringTag, input, withTagList...)
 }
+func (b *BerVideotexString) GetTag() *BerTag {
+	return videotexstringTag
+}

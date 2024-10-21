@@ -21,3 +21,6 @@ func (b *BerNumericString) Encode(reversedWriter io.Writer, withTagList ...bool)
 func (b *BerNumericString) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(numericstringTag, input, withTagList...)
 }
+func (b *BerNumericString) GetTag() *BerTag {
+	return numericstringTag
+}

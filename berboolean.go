@@ -86,3 +86,6 @@ func (b *BerBoolean) Decode(input io.Reader, withTagList ...bool) (int, error) {
 func (b *BerBoolean) S() string {
 	return strconv.FormatBool(b.value)
 }
+func (b *BerBoolean) GetTag() *BerTag {
+	return withTag
+}

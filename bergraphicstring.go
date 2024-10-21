@@ -21,3 +21,6 @@ func (b *BerGraphicString) Encode(reversedWriter io.Writer, withTagList ...bool)
 func (b *BerGraphicString) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(graphicStringTag, input, withTagList...)
 }
+func (b *BerGraphicString) GetTag() *BerTag {
+	return graphicStringTag
+}

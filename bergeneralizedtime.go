@@ -22,3 +22,6 @@ func (b *BerGeneralizedTime) Encode(reversedWriter io.Writer, withTagList ...boo
 func (b *BerGeneralizedTime) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(generalizedTimeTag, input, withTagList...)
 }
+func (b *BerGeneralizedTime) GetTag() *BerTag {
+	return generalizedTimeTag
+}

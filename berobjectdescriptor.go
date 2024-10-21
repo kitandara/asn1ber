@@ -22,3 +22,6 @@ func (b *BerObjectDescriptor) Encode(reversedWriter io.Writer, withTagList ...bo
 func (b *BerObjectDescriptor) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(objectDescriptorTag, input, withTagList...)
 }
+func (b *BerObjectDescriptor) GetTag() *BerTag {
+	return objectDescriptorTag
+}

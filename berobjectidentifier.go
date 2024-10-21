@@ -151,3 +151,6 @@ func (b *BerObjectIdentifier) S() string {
 	}
 	return buffer.String()
 }
+func (b *BerObjectIdentifier) GetTag() *BerTag {
+	return objectIdentifierTag
+}

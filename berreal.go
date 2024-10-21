@@ -214,3 +214,6 @@ func (b *BerReal) encodeValue(writer io.Writer) (int, error) {
 func (b *BerReal) S() string {
 	return fmt.Sprintf("%f", b.value)
 }
+func (b *BerReal) GetTag() *BerTag {
+	return withTag
+}

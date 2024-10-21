@@ -21,3 +21,6 @@ func (b *BerIA5String) Encode(reversedWriter io.Writer, withTagList ...bool) (in
 func (b *BerIA5String) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(ia5stringTag, input, withTagList...)
 }
+func (b *BerIA5String) GetTag() *BerTag {
+	return ia5stringTag
+}

@@ -21,3 +21,6 @@ func (b *BerPrintableString) Encode(reversedWriter io.Writer, withTagList ...boo
 func (b *BerPrintableString) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(printablestringTag, input, withTagList...)
 }
+func (b *BerPrintableString) GetTag() *BerTag {
+	return printablestringTag
+}

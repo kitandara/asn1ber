@@ -21,3 +21,6 @@ func (b *BerUtcTime) Encode(reversedWriter io.Writer, withTagList ...bool) (int,
 func (b *BerUtcTime) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.DecodeUsingTag(utcTag, input, withTagList...)
 }
+func (b *BerUtcTime) GetTag() *BerTag {
+	return utcTag
+}
