@@ -29,6 +29,7 @@ func NewBerBitString(value []bool) (*BerBitString, error) {
 			b.value[i/8] = (byte)(b.value[i/8] | (1 << (7 - (i % 8))))
 		}
 	}
+
 	return b, nil
 }
 

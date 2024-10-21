@@ -154,6 +154,10 @@ func (tag *BerTag) Equals(tagClass int, primitive int, tagNumber int) bool {
 	return tag.tagNumber == tagNumber && tag.tagClass == tagClass && tag.primitive == primitive
 }
 
+func (tag *BerTag) EqualsTag(t2 *BerTag) bool {
+	return tag.tagNumber == t2.tagNumber && tag.tagClass == t2.tagClass && tag.primitive == t2.primitive
+}
+
 func (tag *BerTag) S() string {
 	return fmt.Sprintf(
 		"identifier class: %d, primitive: %d, Tag number: %d",
