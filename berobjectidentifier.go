@@ -2,8 +2,6 @@ package asn1ber
 
 import (
 	"bytes"
-	"github.com/kitandara/asn1ber/utils"
-
 	"errors"
 	"fmt"
 	"io"
@@ -46,10 +44,10 @@ func (b *BerObjectIdentifier) Encode(reversedWriter io.Writer, withTagList ...bo
 			subIDLength++
 		}
 
-		_, _ = utils.WriteByte(reversedWriter, subidentifier&0x7f)
+		_, _ = WriteByte(reversedWriter, subidentifier&0x7f)
 
 		for j := 1; j <= (subIDLength - 1); j++ {
-			_, _ = utils.WriteByte(((subidentifier >> (7 * j)) & 0xff) | 0x80)
+			_, _ = WriteByte(reversedWriter, ((subidentifier>>(7*j))&0xff)|0x80)
 		}
 
 		codeLength += subIDLength
@@ -108,7 +106,7 @@ func (b *BerObjectIdentifier) Decode(input io.Reader, withTagList ...bool) (int,
 
 	subIdentifier := 0
 	for i := 0; i <= subIDEndIndex; i++ {
-		subIdentifier |= (byteCode[i] & 0x7f) << ((subIDEndIndex - i) * 7)
+		subIdentifier |= int(byteCode[i]&0x7f) << ((subIDEndIndex - i) * 7)
 	}
 
 	if subIdentifier < 40 {
@@ -132,7 +130,7 @@ func (b *BerObjectIdentifier) Decode(input io.Reader, withTagList ...bool) (int,
 		}
 		subIdentifier = 0
 		for j := subIDStartIndex; j <= subIDEndIndex; j++ {
-			subIdentifier |= (byteCode[j] & 0x7f) << ((subIDEndIndex - j) * 7)
+			subIdentifier |= int(byteCode[j]&0x7f) << ((subIDEndIndex - j) * 7)
 		}
 		objectIdentifierComponentsList = append(objectIdentifierComponentsList, subIdentifier)
 		subIDEndIndex++

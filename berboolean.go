@@ -2,7 +2,6 @@ package asn1ber
 
 import (
 	"errors"
-	"github.com/kitandara/asn1ber/utils"
 	"io"
 	"strconv"
 )
@@ -74,7 +73,7 @@ func (b *BerBoolean) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		return codeLength, errors.New("Invalid length for boolean type")
 	}
 
-	nextByte, err := utils.ReadByte(input)
+	nextByte, err := ReadByte(input)
 	if err != nil {
 		return codeLength, err
 	}
@@ -87,5 +86,5 @@ func (b *BerBoolean) S() string {
 	return strconv.FormatBool(b.value)
 }
 func (b *BerBoolean) GetTag() *BerTag {
-	return withTag
+	return boolTag
 }

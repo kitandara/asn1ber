@@ -1,7 +1,6 @@
 package asn1ber
 
 import (
-	
 	"errors"
 	"io"
 )
@@ -66,5 +65,5 @@ func (b *BerNull) S() string {
 	return "ASN1_NULL"
 }
 func (b *BerNull) GetTag() *BerTag {
-	return withTag
+	return nullTag
 }

@@ -1,7 +1,6 @@
-package utils
+package asn1ber
 
 import (
-	"github.com/kitandara/asn1ber"
 	"io"
 )
 
@@ -13,7 +12,7 @@ func DecodeUnknownComponent(input io.Reader, oslist ...io.Writer) (int, error) {
 		output = nil
 	}
 
-	length := new(asn1ber.BerLength)
+	length := new(BerLength)
 	byteCount, err := length.Decode(input)
 	if err != nil {
 		return byteCount, err
@@ -22,7 +21,7 @@ func DecodeUnknownComponent(input io.Reader, oslist ...io.Writer) (int, error) {
 	}
 
 	lengthVal := length.Length
-	berTag := new(asn1ber.BerTag)
+	berTag := new(BerTag)
 
 	if lengthVal < 0 {
 		n, err := berTag.Decode(input)
@@ -46,7 +45,7 @@ func DecodeUnknownComponent(input io.Reader, oslist ...io.Writer) (int, error) {
 			}
 			byteCount += n
 		}
-		err = asn1ber.ReadEocByte(input)
+		err = ReadEocByte(input)
 		byteCount += 1 // Exactly one byte read
 		if err != nil {
 			return byteCount, err

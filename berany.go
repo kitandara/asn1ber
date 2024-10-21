@@ -3,7 +3,6 @@ package asn1ber
 import (
 	"bytes"
 	"encoding/hex"
-	"github.com/kitandara/asn1ber/utils"
 	"io"
 )
 
@@ -29,7 +28,7 @@ func (b *BerAny) DecodeWithTag(r io.Reader, tag *BerTag) (int, error) {
 		}
 	}
 	_, _ = tag.Encode(os)
-	n, err := utils.DecodeUnknownComponent(r, os)
+	n, err := DecodeUnknownComponent(r, os)
 	byteCount += n
 	if err != nil {
 		return byteCount, err

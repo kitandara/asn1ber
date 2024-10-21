@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/kitandara/asn1ber/utils"
 	"io"
 	"slices"
 )
@@ -79,7 +78,7 @@ func (b *BerOctetString) Decode(input io.Reader, withTagList ...bool) (int, erro
 	}
 	codeLength := 0
 	if withTag {
-		nextByte, err := utils.ReadByte(input)
+		nextByte, err := ReadByte(input)
 		if err != nil {
 			return codeLength, err
 		}
@@ -169,5 +168,5 @@ func (b *BerOctetString) S() string {
 	return hex.EncodeToString(b.value)
 }
 func (b *BerOctetString) GetTag() *BerTag {
-	return withTag
+	return octetStringTag
 }

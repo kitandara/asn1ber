@@ -82,5 +82,5 @@ func (b *BerVisibleString) S() string {
 	return string(b.value)
 }
 func (b *BerVisibleString) GetTag() *BerTag {
-	return withTag
+	return berVisibleStringTag
 }
