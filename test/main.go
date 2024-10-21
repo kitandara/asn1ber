@@ -1,16 +1,15 @@
 package main
 
 import (
-	 
-	types"
 	"encoding/hex"
 	"fmt"
+	asn1 "github.com/kitandara/asn1ber"
 )
 
 func main() {
 
-	d := NewBerEnum(4)
-	w := .NewReversedIOWriter()
+	d := asn1.NewBerEnum(4)
+	w := asn1.NewReversedIOWriter()
 
 	d.Encode(w)
 

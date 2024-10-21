@@ -2,7 +2,8 @@ package asn1ber
 
 import (
 	"bytes"
-	
+	"github.com/kitandara/asn1ber/utils"
+
 	"errors"
 	"fmt"
 	"io"
@@ -45,10 +46,10 @@ func (b *BerObjectIdentifier) Encode(reversedWriter io.Writer, withTagList ...bo
 			subIDLength++
 		}
 
-		_, _ = WriteByte(reversedWriter, subidentifier&0x7f)
+		_, _ = utils.WriteByte(reversedWriter, subidentifier&0x7f)
 
 		for j := 1; j <= (subIDLength - 1); j++ {
-			_, _ = WriteByte(((subidentifier >> (7 * j)) & 0xff) | 0x80)
+			_, _ = utils.WriteByte(((subidentifier >> (7 * j)) & 0xff) | 0x80)
 		}
 
 		codeLength += subIDLength

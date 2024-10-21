@@ -1,9 +1,9 @@
 package asn1ber
 
 import (
-	
 	"errors"
 	"fmt"
+	"github.com/kitandara/asn1ber/utils"
 	"io"
 	"math"
 	"math/big"
@@ -72,7 +72,7 @@ func (b *BerReal) Decode(input io.Reader, withTagList ...bool) (int, error) {
 		return codeLength, nil
 	}
 	if berLength.Length == 1 {
-		nextByte, err := ReadByte(input)
+		nextByte, err := utils.ReadByte(input)
 		if err != nil {
 			return 0, err
 		} else if nextByte == 0x40 {
@@ -146,10 +146,10 @@ func (b *BerReal) encodeValue(writer io.Writer) (int, error) {
 		if mantissa == 0x0010000000000000 {
 			if isNegative {
 				// - infinity
-				_, _ = WriteByte(writer, 0x41)
+				_, _ = utils.WriteByte(writer, 0x41)
 			} else {
 				// + infinity
-				_, _ = WriteByte(writer, 0x40)
+				_, _ = utils.WriteByte(writer, 0x40)
 			}
 			return 1, nil
 		} else {
@@ -183,7 +183,7 @@ func (b *BerReal) encodeValue(writer io.Writer) (int, error) {
 	mantissaLength := (8 - bits.LeadingZeros64(mantissa) + 7) / 8
 
 	for i := 0; i < mantissaLength; i++ {
-		_, _ = WriteByte(writer, mantissa>>(8*i))
+		_, _ = utils.WriteByte(writer, mantissa>>(8*i))
 	}
 	codeLength := mantissaLength
 
@@ -195,15 +195,15 @@ func (b *BerReal) encodeValue(writer io.Writer) (int, error) {
 	if len(exponentBytes) < 4 {
 		exponentFormat = len(exponentBytes) - 1
 	} else {
-		_, _ = WriteByte(writer, len(exponentBytes))
+		_, _ = utils.WriteByte(writer, len(exponentBytes))
 		codeLength++
 		exponentFormat = 0x03
 	}
 
 	if isNegative {
-		_, _ = WriteByte(writer, 0x80|0x40|exponentFormat)
+		_, _ = utils.WriteByte(writer, 0x80|0x40|exponentFormat)
 	} else {
-		_, _ = WriteByte(writer, 0x80|exponentFormat)
+		_, _ = utils.WriteByte(writer, 0x80|exponentFormat)
 	}
 
 	codeLength++

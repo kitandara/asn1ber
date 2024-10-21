@@ -32,6 +32,10 @@ func NewBerBitString(value []bool) (*BerBitString, error) {
 	return b, nil
 }
 
+func (b *BerBitString) GetTag() *BerTag {
+	return bitStringTag
+}
+
 func (b *BerBitString) getValueAsBooleans() []bool {
 	if b.value == nil {
 		return nil

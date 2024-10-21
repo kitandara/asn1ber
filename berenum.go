@@ -1,7 +1,6 @@
 package asn1ber
 
 import (
-	
 	"io"
 )
 
@@ -24,4 +23,8 @@ func (b *BerEnum) Encode(reversedWriter io.Writer, withTagList ...bool) (int, er
 
 func (b *BerEnum) Decode(input io.Reader, withTagList ...bool) (int, error) {
 	return b.decodeUsingTag(enumTag, input, withTagList...)
+}
+
+func (b *BerEnum) GetTag() *BerTag {
+	return enumTag
 }

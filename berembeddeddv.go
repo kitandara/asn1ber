@@ -3,6 +3,7 @@ package asn1ber
 import (
 	"errors"
 	"fmt"
+	"github.com/kitandara/asn1ber/utils"
 	"io"
 )
 
@@ -30,7 +31,7 @@ func (b *BerEmbeddedPdv) Encode(reversedWriter io.Writer, withTagList ...bool) (
 		return 0, err
 	}
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 2
-	n, err = WriteByte(reversedWriter, 0x82)
+	n, err = utils.WriteByte(reversedWriter, 0x82)
 	codeLength += 1
 	if err != nil {
 		return 0, err
@@ -41,7 +42,7 @@ func (b *BerEmbeddedPdv) Encode(reversedWriter io.Writer, withTagList ...bool) (
 			return 0, err
 		}
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 1
-		n, err = WriteByte(reversedWriter, 0x81)
+		n, err = utils.WriteByte(reversedWriter, 0x81)
 		codeLength += 1
 	}
 	subLength, err = b.identification.encode(reversedWriter)
@@ -52,7 +53,7 @@ func (b *BerEmbeddedPdv) Encode(reversedWriter io.Writer, withTagList ...bool) (
 	n, err = EncodeLength(subLength, reversedWriter)
 	codeLength += n
 	// write tag: CONTEXT_CLASS, CONSTRUCTED, 0
-	n, err = WriteByte(reversedWriter, 0xA0)
+	n, err = utils.WriteByte(reversedWriter, 0xA0)
 	codeLength += 1
 	if err != nil {
 		return 0, err
@@ -246,7 +247,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.fixed.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 5
 		codeLength += n
-		_, err := WriteByte(reversedWriter, 0x85)
+		_, err := utils.WriteByte(reversedWriter, 0x85)
 		if err != nil {
 			return codeLength, err
 		}
@@ -258,7 +259,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.transferSyntax.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 4
 		codeLength += n
-		_, err := WriteByte(reversedWriter, 0x84)
+		_, err := utils.WriteByte(reversedWriter, 0x84)
 		if err != nil {
 			return codeLength, err
 		}
@@ -271,7 +272,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.contextNegotiation.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 3
 		codeLength += n
-		_, err := WriteByte(reversedWriter, 0xA3)
+		_, err := utils.WriteByte(reversedWriter, 0xA3)
 		if err != nil {
 			return codeLength, err
 		}
@@ -284,7 +285,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.presentationContextId.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 2
 		codeLength += n
-		_, err := WriteByte(reversedWriter, 0x82)
+		_, err := utils.WriteByte(reversedWriter, 0x82)
 		if err != nil {
 			return codeLength, err
 		}
@@ -297,7 +298,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.syntax.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 1
 		codeLength += n
-		_, err := WriteByte(reversedWriter, 0x81)
+		_, err := utils.WriteByte(reversedWriter, 0x81)
 		if err != nil {
 			return codeLength, err
 		}
@@ -310,7 +311,7 @@ func (b *Identification) encode(reversedWriter io.Writer) (int, error) {
 		n, _ := b.syntaxes.Encode(reversedWriter, false)
 		// write tag: CONTEXT_CLASS, PRIMITIVE, 0
 		codeLength += n
-		_, err := WriteByte(reversedWriter, 0xA0)
+		_, err := utils.WriteByte(reversedWriter, 0xA0)
 		if err != nil {
 			return codeLength, err
 		}
@@ -339,7 +340,7 @@ func (b *Syntaxes) Encode(reversedWriter io.Writer, withTagList ...bool) (int, e
 	n, _ := b.transfer.Encode(reversedWriter, false)
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 1
 	codeLength := n
-	_, err := WriteByte(reversedWriter, 0x81)
+	_, err := utils.WriteByte(reversedWriter, 0x81)
 	if err != nil {
 		return codeLength, err
 	}
@@ -350,7 +351,7 @@ func (b *Syntaxes) Encode(reversedWriter io.Writer, withTagList ...bool) (int, e
 	}
 	codeLength += n
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 0
-	_, err = WriteByte(reversedWriter, 0x80)
+	_, err = utils.WriteByte(reversedWriter, 0x80)
 	if err != nil {
 		return codeLength, err
 	}
@@ -459,7 +460,7 @@ func (b *contextNegotiation) Encode(reversedWriter io.Writer, withTagList ...boo
 		return codeLength, err
 	}
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 1
-	_, err = WriteByte(reversedWriter, 0x81)
+	_, err = utils.WriteByte(reversedWriter, 0x81)
 	if err != nil {
 		return codeLength, err
 	}
@@ -471,7 +472,7 @@ func (b *contextNegotiation) Encode(reversedWriter io.Writer, withTagList ...boo
 	}
 
 	// write tag: CONTEXT_CLASS, PRIMITIVE, 0
-	_, err = WriteByte(reversedWriter, 0x80)
+	_, err = utils.WriteByte(reversedWriter, 0x80)
 	if err != nil {
 		return codeLength, err
 	}

@@ -1,10 +1,10 @@
 package asn1ber
 
 import (
-	
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/kitandara/asn1ber/utils"
 	"io"
 	"slices"
 )
@@ -79,7 +79,7 @@ func (b *BerOctetString) Decode(input io.Reader, withTagList ...bool) (int, erro
 	}
 	codeLength := 0
 	if withTag {
-		nextByte, err := ReadByte(input)
+		nextByte, err := utils.ReadByte(input)
 		if err != nil {
 			return codeLength, err
 		}
