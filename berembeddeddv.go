@@ -110,7 +110,7 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 			return codeLength, err
 		}
 		vByteCount += n
-		n, err = berLength.ReadEocIndefinite(input)
+		n, err = berLength.ReadEocIfIndefinite(input)
 		if err != nil {
 			return codeLength, err
 		}

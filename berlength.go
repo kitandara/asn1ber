@@ -95,7 +95,7 @@ func (l *BerLength) Decode(input io.Reader) (int, error) {
 	return lenLength, nil
 }
 
-func (l *BerLength) ReadEocIndefinite(input io.Reader) (int, error) {
+func (l *BerLength) ReadEocIfIndefinite(input io.Reader) (int, error) {
 	if l.Length >= 0 {
 		return 0, nil
 	}

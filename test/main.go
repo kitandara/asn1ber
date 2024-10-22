@@ -12,9 +12,9 @@ func main() {
 	w := asn1.NewReversedIOWriter()
 
 	n := new(asn1.BerOctetString).GetTag()
-	var b []int = nil
+	var b []*asn1.BerTag = nil
 
-	b = append(b, 4)
+	b = append(b, nil)
 	d.Encode(w)
 
 	xd := w.GetBytes()
