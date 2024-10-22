@@ -169,7 +169,7 @@ func (b *BerEmbeddedPdv) Decode(input io.Reader, withTagList ...bool) (int, erro
 }
 
 func (b *BerEmbeddedPdv) S() string {
-	return fmt.Sprintf("{EmbeddedPdv<<fields-not-included>}")
+	return fmt.Sprintf("{EmbeddedPdv<fields-not-included>}")
 }
 
 type Identification struct {
