@@ -91,6 +91,7 @@ func (b *BerInteger) S() string {
 func (b *BerInteger) longValue() int64 {
 	return b.value.Int64()
 }
+
 func (b *BerInteger) GetTag() *BerTag {
 	return intTag
 }

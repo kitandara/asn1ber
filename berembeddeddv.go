@@ -1,6 +1,7 @@
 package asn1ber
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -557,6 +558,10 @@ func (b *contextNegotiation) Decode(input io.Reader, withTagList ...bool) (int, 
 	}
 	return 0, errors.New(fmt.Sprintf("unexpected end of sequence, length tag: %d, bytes decoded: %d", lengthVal, vByteCount))
 }
-func (b *contextNegotiation) GetTag() *BerTag {
+func (b *BerEmbeddedPdv) GetTag() *BerTag {
 	return dvTag
+}
+
+func (b *BerEmbeddedPdv) AppendAsString(sb bytes.Buffer, indentLevel int) {
+	sb.WriteString(b.S())
 }
