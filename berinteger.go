@@ -88,7 +88,7 @@ func (b *BerInteger) S() string {
 	return b.value.String()
 }
 
-func (b *BerInteger) longValue() int64 {
+func (b *BerInteger) LongValue() int64 {
 	return b.value.Int64()
 }
 

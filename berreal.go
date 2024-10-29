@@ -21,6 +21,10 @@ func NewBerReal(v float64) *BerReal {
 	return &BerReal{value: v}
 }
 
+func (b *BerReal) GetValue() float64 {
+	return b.value
+}
+
 func (b *BerReal) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {

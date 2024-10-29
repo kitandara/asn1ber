@@ -16,6 +16,10 @@ func NewBerBoolean(v bool) *BerBoolean {
 	return &BerBoolean{value: v}
 }
 
+func (b *BerBoolean) GetValue() bool {
+	return b.value
+}
+
 func (b *BerBoolean) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {

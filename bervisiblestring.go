@@ -14,6 +14,10 @@ func NewBerVisibleString(value string) *BerVisibleString {
 	return &BerVisibleString{value: []byte(value)}
 }
 
+func (b *BerVisibleString) GetValue() []byte {
+	return b.value
+}
+
 func (b *BerVisibleString) Encode(reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	return b.EncodeUsingTag(berVisibleStringTag, reversedWriter, withTagList...)
 }

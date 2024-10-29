@@ -18,6 +18,10 @@ func NewBerOctetString(v []byte) *BerOctetString {
 	return &BerOctetString{value: v}
 }
 
+func (b *BerOctetString) GetValue() []byte {
+	return b.value
+}
+
 func (b *BerOctetString) EncodeUsingTag(tag *BerTag, reversedWriter io.Writer, withTagList ...bool) (int, error) {
 	var withTag bool
 	if len(withTagList) > 0 {
